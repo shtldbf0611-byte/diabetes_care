@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiaCare - Interactive Diabetes Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">🩺 DiaCare</div>
+        <nav>
+            <a href="#dashboard" class="nav-link active">Dashboard</a>
+            <a href="#appointment">Hospital & Booking</a>
+            <a href="#diet">Diet & Delivery</a>
+            <a href="#medication">Meds Delivery</a>
+        </nav>
+        <div class="nav-right">
+            <span class="cart-badge">🛒 Cart: <span id="cart-count">0</span></span>
+            <div class="user-profile">
+                <span id="nav-username">Patient</span> (<span id="nav-diabetestype">Type 2</span>)
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="welcome-section card">
+            <div class="profile-header">
+                <h2>👋 Welcome back, <span id="display-name">Patient</span>!</h2>
+                <p>Track and manage your diabetes health parameters today.</p>
+            </div>
+            <div class="inline-form profile-form" style="width: auto; gap: 10px;">
+                <input type="text" id="name-input" placeholder="Type your name here..." style="max-width: 180px;">
+                <select id="type-select" style="padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-weight: 600; color: var(--primary-color);">
+                    <option value="Type 1">Type 1</option>
+                    <option value="Type 2" selected>Type 2</option>
+                    <option value="Prediabetes">Prediabetes</option>
+                </select>
+                <button id="btn-update-name" class="btn-primary">Save Profile</button>
+            </div>
+        </section>
+
+        <section class="summary-section" id="dashboard">
+            <div class="card status-card">
+                <h3>🩸 HbA1c Tracker</h3>
+                <div class="hba1c-display">
+                    <span id="current-hba1c">0.0%</span>
+                    <span id="hba1c-status" class="badge">No Data</span>
+                </div>
+                <p class="text-muted">Target: Under 6.5%</p>
+                
+                <form id="hba1c-form" class="inline-form">
+                    <input type="number" step="0.1" id="hba1c-input" placeholder="e.g., 6.2" required>
+                    <input type="date" id="hba1c-date" required>
+                    <button type="submit" class="btn-primary">Save</button>
+                </form>
+                
+                <div class="history-list">
+                    <h4>Past Records</h4>
+                    <ul id="hba1c-history"></ul>
+                </div>
+            </div>
+
+            <div class="card log-card">
+                <h3>💊 Daily Medication Log</h3>
+                <form id="med-form" class="inline-form">
+                    <input type="text" id="med-input" placeholder="Add new medication..." required>
+                    <button type="submit" class="btn-secondary">Add</button>
+                </form>
+                <ul id="med-list" class="checklist">
+                    </ul>
+                <button class="btn-clear" onclick="clearMedicationLogs()">Reset Daily Check</button>
+            </div>
+        </section>
+
+        <section id="appointment" class="section-block">
+            <h2>🏥 Medical Reports & AI Symptom Booking</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h4>Lab Test Results Summary</h4>
+                    <form id="lab-form" class="inline-form">
+                        <input type="text" id="lab-name" placeholder="Item (e.g., Fasting Blood Sugar)" required>
+                        <input type="number" id="lab-value" placeholder="Value" required>
+                        <input type="text" id="lab-unit" placeholder="Unit (mg/dL)" required>
+                        <button type="submit" class="btn-primary">Add</button>
+                    </form>
+                    <table class="result-table">
+                        <thead>
+                            <tr><th>Test Item</th><th>Value</th><th>Action</th></tr>
+                        </thead>
+                        <tbody id="lab-table-body">
+                            </tbody>
+                    </table>
+                </div>
+                
+                <div class="card bg-light">
+                    <h4>🚨 AI Symptom-Based Auto-Booking</h4>
+                    <p>Select any urgent symptoms you are currently experiencing:</p>
+                    <select id="symptom-select" class="form-select">
+                        <option value="">--- Select Symptom ---</option>
+                        <option value="vision">Blurred vision / Double vision</option>
+                        <option value="thirst">Extreme thirst & frequent urination at night</option>
+                        <option value="numbness">Numbness, tingling, or pain in hands/feet</option>
+                    </select>
+                    <button type="button" class="btn-danger" onclick="analyzeSymptoms()">Analyze & Auto-Book</button>
+                    <div id="booking-result" class="booking-ticket" style="display: none;"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="diet" class="section-block">
+            <h2>🥗 Customized Diabetic Recipes & Meal Delivery</h2>
+            <div class="grid-3">
+                <div class="card recipe-card">
+                    <div class="recipe-thumb">🥗</div>
+                    <h4>Tofu & Mushroom Salad</h4>
+                    <p class="recipe-desc">High-protein, low-carb fiber rich diet.</p>
+                    <div class="tag">Low GI</div>
+                    <button class="btn-sm" onclick="addToCart('Tofu & Mushroom Salad')">Order Meal Kit</button>
+                </div>
+                <div class="card recipe-card">
+                    <div class="recipe-thumb">🐟</div>
+                    <h4>Baked Salmon & Asparagus</h4>
+                    <p class="recipe-desc">Rich in Omega-3 for cardiovascular protection.</p>
+                    <div class="tag">Healthy Fats</div>
+                    <button class="btn-sm" onclick="addToCart('Baked Salmon & Asparagus')">Order Meal Kit</button>
+                </div>
+                <div class="card recipe-card">
+                    <div class="recipe-thumb">🍛</div>
+                    <h4>Konjac Veggie Fried Rice</h4>
+                    <p class="recipe-desc">High-fiber carbohydrate substitute.</p>
+                    <div class="tag">Low Carb</div>
+                    <button class="btn-sm" onclick="addToCart('Konjac Veggie Fried Rice')">Order Now</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="medication" class="section-block">
+            <h2>📦 Prescription Remote Delivery Service</h2>
+            <div class="card delivery-card">
+                <div class="grid-2">
+                    <div>
+                        <h4>Upload Doctor's Prescription</h4>
+                        <p class="text-muted">Upload a clear photo of your prescription to trigger pharmacy remote routing.</p>
+                        <input type="file" id="prescription-file" class="file-input" onchange="simulatePrescriptionUpload()">
+                    </div>
+                    <div class="delivery-status-box">
+                        <h4>Delivery Status Tracking</h4>
+                        <div class="status-steps">
+                            <div class="step" id="step-1">1. Verification</div>
+                            <div class="step" id="step-2">2. Dispensing</div>
+                            <div class="step" id="step-3">3. Shipping</div>
+                        </div>
+                        <p id="delivery-msg">Waiting for prescription upload...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2026 DiaCare Platform. HIPAA Compliant & Securely Encrypted.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
