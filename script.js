@@ -1,13 +1,13 @@
 // ====== APP INITIALIZATION ======
 document.addEventListener('DOMContentLoaded', () => {
-    initProfile();      // 실시간 이름 및 유형 동기화 기능 로드
+    initProfile();      // Loads real-time profile name and type sync
     initHbA1c();
     initMedications();
     initLabResults();
     updateCartCount();
 });
 
-// ====== 🔥 UPDATED: REAL-TIME PATIENT NAME & TYPE SYNC ======
+// ====== REAL-TIME PATIENT NAME & TYPE SYNC ======
 function initProfile() {
     const nameInput = document.getElementById('name-input');
     const typeSelect = document.getElementById('type-select');
@@ -15,11 +15,11 @@ function initProfile() {
     
     if (!nameInput || !typeSelect) return;
 
-    // 브라우저 캐시에서 기존 이름 및 유형 데이터 로드 (없으면 기본값 설정)
+    // Load cached profile data from localStorage (fallback to defaults if empty)
     const savedName = localStorage.getItem('userName') || 'Patient';
     const savedType = localStorage.getItem('diabetesType') || 'Type 2';
     
-    // UI 초기화 업데이트
+    // Initialize UI states
     updateDOMProfile(savedName, savedType);
     
     if (savedName !== 'Patient') {
@@ -27,7 +27,7 @@ function initProfile() {
     }
     typeSelect.value = savedType;
 
-    // [이벤트 1] 이름을 타이핑할 때마다 실시간 연동 및 저장
+    // Event 1: Sync and save profile name instantly on keypress
     nameInput.addEventListener('input', () => {
         const currentName = nameInput.value.trim() || 'Patient';
         const currentType = typeSelect.value;
@@ -35,7 +35,7 @@ function initProfile() {
         localStorage.setItem('userName', currentName);
     });
 
-    // [이벤트 2] 당뇨 유형 셀렉트 박스를 바꿀 때마다 우측 상단 실시간 연동 및 저장
+    // Event 2: Sync and save diabetes type instantly on dropdown change
     typeSelect.addEventListener('change', () => {
         const currentName = nameInput.value.trim() || 'Patient';
         const currentType = typeSelect.value;
@@ -43,7 +43,7 @@ function initProfile() {
         localStorage.setItem('diabetesType', currentType);
     });
 
-    // Save 버튼을 눌렀을 때 전체 최종 확인 팝업
+    // Manual fallback alert trigger on Save Button click
     btnUpdate.addEventListener('click', () => {
         const finalName = nameInput.value.trim() || 'Patient';
         const finalType = typeSelect.value;
@@ -54,15 +54,15 @@ function initProfile() {
     });
 }
 
-// 화면 요소들을 한 번에 동기화해주는 마스터 함수
+// Master layout rendering engine for syncing profile strings across elements
 function updateDOMProfile(name, type) {
     const navUser = document.getElementById('nav-username');
     const navType = document.getElementById('nav-diabetestype');
     const dispName = document.getElementById('display-name');
     
-    if (navUser) navUser.innerText = name;     // 우측 상단 이름 변경
-    if (navType) navType.innerText = type;     // 우측 상단 유형 괄호 안 텍스트 변경
-    if (dispName) dispName.innerText = name;   // 대시보드 환영 문구 이름 변경
+    if (navUser) navUser.innerText = name;     // Updates navbar username
+    if (navType) navType.innerText = type;     // Updates navbar condition type badge
+    if (dispName) dispName.innerText = name;   // Updates main dashboard hero panel greeting text
 }
 
 // ====== FEATURE 1: HbA1c TRACKER ======
@@ -163,6 +163,7 @@ function toggleMed(index) {
     renderMedications();
 }
 
+// Fixed missing scope variable issues with explicit index matching removals
 function deleteMed(index) {
     medications.splice(index, 1);
     localStorage.setItem('medications', JSON.stringify(medications));
